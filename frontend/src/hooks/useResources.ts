@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { resourceApi } from '../api/resourceApi';
-import { CreateResourceInput, Resource, UpdateResourceInput } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import { resourceApi } from "../api/resourceApi";
+import { CreateResourceInput, Resource, UpdateResourceInput } from "../types";
 
 // Centralizes list state + CRUD so components stay presentational.
 export function useResources() {
@@ -14,7 +14,7 @@ export function useResources() {
       setResources(await resourceApi.list());
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load resources');
+      setError(err instanceof Error ? err.message : "Failed to load resources");
     } finally {
       setLoading(false);
     }
@@ -24,24 +24,61 @@ export function useResources() {
     refresh();
   }, [refresh]);
 
-  const addResource = useCallback(async (input: CreateResourceInput) => {
-    const created = await resourceApi.create(input);
-    setResources((prev) => [...prev, created].sort(byRemindAt));
-  }, []);
+  const addResource = useCallback(
+    async (input: CreateResourceInput) => {
+      if (
+        resources.some(
+          (resource) => normalizeUrl(resource.url) === normalizeUrl(input.url),
+        )
+      ) {
+        throw new Error("This URL is already parked.");
+      }
+      const created = await resourceApi.create(input);
+      setResources((prev) => [...prev, created].sort(byRemindAt));
+    },
+    [resources],
+  );
 
-  const editResource = useCallback(async (id: string, input: UpdateResourceInput) => {
-    const updated = await resourceApi.update(id, input);
-    setResources((prev) => prev.map((r) => (r.id === id ? updated : r)).sort(byRemindAt));
-  }, []);
+  const editResource = useCallback(
+    async (id: string, input: UpdateResourceInput) => {
+      if (
+        input.url &&
+        resources.some(
+          (resource) =>
+            resource.id !== id &&
+            normalizeUrl(resource.url) === normalizeUrl(input.url!),
+        )
+      ) {
+        throw new Error("This URL is already parked.");
+      }
+      const updated = await resourceApi.update(id, input);
+      setResources((prev) =>
+        prev.map((r) => (r.id === id ? updated : r)).sort(byRemindAt),
+      );
+    },
+    [resources],
+  );
 
   const removeResource = useCallback(async (id: string) => {
     await resourceApi.remove(id);
     setResources((prev) => prev.filter((r) => r.id !== id));
   }, []);
 
-  return { resources, loading, error, refresh, addResource, editResource, removeResource };
+  return {
+    resources,
+    loading,
+    error,
+    refresh,
+    addResource,
+    editResource,
+    removeResource,
+  };
 }
 
 function byRemindAt(a: Resource, b: Resource) {
   return new Date(a.remindAt).getTime() - new Date(b.remindAt).getTime();
+}
+
+function normalizeUrl(url: string) {
+  return url.trim().toLowerCase();
 }

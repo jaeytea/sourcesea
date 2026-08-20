@@ -22,23 +22,37 @@ export async function create(req: Request, res: Response) {
   if (!url || !title || !remindAt) {
     return res.status(400).json({ error: 'url, title and remindAt are required' });
   }
-  const resource = await resourcesService.createResource(currentUserId(req), {
-    url,
-    title,
-    notes,
-    remindAt,
-  });
-  res.status(201).json(resource);
+  try {
+    const resource = await resourcesService.createResource(currentUserId(req), {
+      url,
+      title,
+      notes,
+      remindAt,
+    });
+    res.status(201).json(resource);
+  } catch (error) {
+    if (error instanceof resourcesService.DuplicateResourceError) {
+      return res.status(409).json({ error: error.message });
+    }
+    throw error;
+  }
 }
 
 export async function update(req: Request, res: Response) {
-  const resource = await resourcesService.updateResource(
-    currentUserId(req),
-    req.params.id,
-    req.body,
-  );
-  if (!resource) return res.status(404).json({ error: 'Resource not found' });
-  res.json(resource);
+  try {
+    const resource = await resourcesService.updateResource(
+      currentUserId(req),
+      req.params.id,
+      req.body,
+    );
+    if (!resource) return res.status(404).json({ error: 'Resource not found' });
+    res.json(resource);
+  } catch (error) {
+    if (error instanceof resourcesService.DuplicateResourceError) {
+      return res.status(409).json({ error: error.message });
+    }
+    throw error;
+  }
 }
 
 export async function remove(req: Request, res: Response) {

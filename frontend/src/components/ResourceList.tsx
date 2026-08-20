@@ -1,7 +1,7 @@
-import { Stack } from '@mui/material';
-import { Resource } from '../types';
-import { EmptyState } from './EmptyState';
-import { ResourceCard } from './ResourceCard';
+import { Box } from "@mui/material";
+import { Resource } from "../types";
+import { EmptyState } from "./EmptyState";
+import { ResourceCard } from "./ResourceCard";
 
 interface Props {
   resources: Resource[];
@@ -13,15 +13,32 @@ export function ResourceList({ resources, onEdit, onDelete }: Props) {
   if (resources.length === 0) return <EmptyState />;
 
   return (
-    <Stack spacing={2}>
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 2,
+        py: 2,
+        alignItems: "stretch",
+        width: "100%",
+      }}
+    >
       {resources.map((resource) => (
-        <ResourceCard
+        <Box
           key={resource.id}
-          resource={resource}
-          onEdit={() => onEdit(resource)}
-          onDelete={() => onDelete(resource)}
-        />
+          sx={{
+            flex: "1 1 280px",
+            minWidth: { xs: "100%", sm: 280 },
+            maxWidth: { xs: "100%", md: "calc(50% - 8px)" },
+          }}
+        >
+          <ResourceCard
+            resource={resource}
+            onEdit={() => onEdit(resource)}
+            onDelete={() => onDelete(resource)}
+          />
+        </Box>
       ))}
-    </Stack>
+    </Box>
   );
 }
