@@ -7,7 +7,7 @@ create extension if not exists pgcrypto;
 
 create table if not exists resources (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid,                          -- FK to auth.users (added later)
+  user_id     uuid,                           -- Supabase user id (auth.users lives in a different DB — no FK here)
   url         text not null,
   title       text not null,
   notes       text,

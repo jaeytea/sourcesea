@@ -1,4 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import {
@@ -6,11 +7,15 @@ import {
   Box,
   Container,
   Fab,
+  Button,
   Snackbar,
   Toolbar,
   Typography,
   IconButton,
   Tooltip,
+  Menu,
+  MenuItem,
+  Stack,
 } from "@mui/material";
 import { useState } from "react";
 import { ResourceDialog } from "./components/ResourceDialog";
@@ -20,6 +25,7 @@ import { useNotificationScheduler } from "./hooks/useNotificationScheduler";
 import { useResources } from "./hooks/useResources";
 import { Resource } from "./types";
 import { Footer } from "./components/Footer";
+import { useAuth } from "./auth/AuthContext";
 
 interface AppProps {
   mode: "light" | "dark";
@@ -33,6 +39,8 @@ export default function App({ mode, onToggleMode }: AppProps) {
   const [editing, setEditing] = useState<Resource | null>(null);
   const [snackbar, setSnackbar] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [accountMenuAnchor, setAccountMenuAnchor] =
+    useState<null | HTMLElement>(null);
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const filteredResources = resources.filter((resource) =>
@@ -83,6 +91,32 @@ export default function App({ mode, onToggleMode }: AppProps) {
     }
   };
 
+  //todo: edit this in a diff component
+  const { session, loading, signInWithGoogle, signOut } = useAuth();
+
+  if (loading) return null; // or a spinner
+
+  if (!session) {
+    return (
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{ height: "100vh" }}
+        spacing={2}
+      >
+        <Typography
+          variant="h3"
+          color="primary.main"
+          sx={{ fontFamily: "sans-serif" }}
+        >
+          SourceSea
+        </Typography>
+        <Button variant="contained" onClick={signInWithGoogle}>
+          Continue with Google
+        </Button>
+      </Stack>
+    );
+  }
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Box component="main" sx={{ flex: 1 }}>
@@ -143,6 +177,41 @@ export default function App({ mode, onToggleMode }: AppProps) {
                 {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
               </IconButton>
             </Tooltip>
+            {/** dropdown for signout placed here */}
+            <Tooltip title="Account">
+              <IconButton
+                color="inherit"
+                aria-label="Open account menu"
+                aria-controls={accountMenuAnchor ? "account-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={accountMenuAnchor ? "true" : undefined}
+                onClick={(event) =>
+                  setAccountMenuAnchor(
+                    accountMenuAnchor ? null : event.currentTarget,
+                  )
+                }
+                onMouseEnter={(event) =>
+                  setAccountMenuAnchor(event.currentTarget)
+                }
+              >
+                <AccountCircleIcon />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              id="account-menu"
+              anchorEl={accountMenuAnchor}
+              open={Boolean(accountMenuAnchor)}
+              onClose={() => setAccountMenuAnchor(null)}
+              MenuListProps={{
+                onMouseEnter: () => setAccountMenuAnchor(accountMenuAnchor),
+                onMouseLeave: () => setAccountMenuAnchor(null),
+              }}
+            >
+              <MenuItem disabled>
+                {session.user.email ?? session.user.id}
+              </MenuItem>
+              <MenuItem onClick={signOut}>Sign out</MenuItem>
+            </Menu>
           </Toolbar>
         </AppBar>
 

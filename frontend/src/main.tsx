@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import App from "./App";
 import { createAppTheme } from "./theme";
+import { AuthProvider } from "./auth/AuthContext";
 
 function Root() {
   const [mode, setMode] = useState<"light" | "dark">(
@@ -22,7 +23,9 @@ function Root() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App mode={mode} onToggleMode={toggleMode} />
+      <AuthProvider>
+        <App mode={mode} onToggleMode={toggleMode} />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
