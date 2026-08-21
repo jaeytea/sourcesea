@@ -7,9 +7,15 @@ interface Props {
   resources: Resource[];
   onEdit: (resource: Resource) => void;
   onDelete: (resource: Resource) => void;
+  onStatusChange: (resource: Resource, status: Resource["status"]) => void;
 }
 
-export function ResourceList({ resources, onEdit, onDelete }: Props) {
+export function ResourceList({
+  resources,
+  onEdit,
+  onDelete,
+  onStatusChange,
+}: Props) {
   if (resources.length === 0) return <EmptyState />;
 
   return (
@@ -36,6 +42,7 @@ export function ResourceList({ resources, onEdit, onDelete }: Props) {
             resource={resource}
             onEdit={() => onEdit(resource)}
             onDelete={() => onDelete(resource)}
+            onStatusChange={(status) => onStatusChange(resource, status)}
           />
         </Box>
       ))}

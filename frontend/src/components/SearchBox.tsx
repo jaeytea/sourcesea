@@ -15,6 +15,11 @@ export function SearchBox({ value, onChange }: Props) {
       aria-label="Search your parked tabs"
       fullWidth
       size="small"
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          backgroundColor: "white",
+        },
+      }}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

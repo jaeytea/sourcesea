@@ -1,29 +1,54 @@
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Card, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material';
-import { Resource } from '../types';
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import UndoIcon from "@mui/icons-material/Undo";
+import {
+  Card,
+  CardContent,
+  Chip,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { Resource } from "../types";
 
 interface Props {
   resource: Resource;
   onEdit: () => void;
   onDelete: () => void;
+  onStatusChange: (status: Resource["status"]) => void;
 }
 
 function statusChip(resource: Resource) {
-  const isOverdue = resource.status === 'pending' && new Date(resource.remindAt) <= new Date();
-  if (resource.status === 'done') return <Chip label="Done" color="success" size="small" />;
+  const isOverdue =
+    resource.status === "pending" && new Date(resource.remindAt) <= new Date();
+  if (resource.status === "done")
+    return <Chip label="Done" color="success" size="small" />;
+  if (resource.status === "dismissed")
+    return <Chip label="Dismissed" color="default" size="small" />;
   if (isOverdue) return <Chip label="Due now" color="error" size="small" />;
   return <Chip label="Pending" color="secondary" size="small" />;
 }
 
-export function ResourceCard({ resource, onEdit, onDelete }: Props) {
+export function ResourceCard({
+  resource,
+  onEdit,
+  onDelete,
+  onStatusChange,
+}: Props) {
   const remindDate = new Date(resource.remindAt);
 
   return (
-    <Card variant="outlined" sx={{ borderColor: 'secondary.main' }}>
+    <Card variant="outlined" sx={{ borderColor: "secondary.main" }}>
       <CardContent>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          spacing={1}
+        >
           <Stack spacing={0.5} sx={{ minWidth: 0 }}>
             <Typography variant="h6" noWrap title={resource.title}>
               {resource.title}
@@ -47,14 +72,47 @@ export function ResourceCard({ resource, onEdit, onDelete }: Props) {
           </Typography>
         )}
 
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 2 }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ mt: 2 }}
+        >
           <Typography variant="caption" color="text.secondary">
             Remind at {remindDate.toLocaleString()}
           </Typography>
           <Stack direction="row" spacing={0.5}>
-            <IconButton size="small" href={resource.url} target="_blank" rel="noreferrer">
+            <IconButton
+              size="small"
+              href={resource.url}
+              target="_blank"
+              rel="noreferrer"
+            >
               <OpenInNewIcon fontSize="small" />
             </IconButton>
+            {resource.status === "pending" && (
+              <>
+                <Tooltip title="Mark done">
+                  <IconButton
+                    size="small"
+                    onClick={() => onStatusChange("done")}
+                    color="success"
+                  >
+                    <CheckCircleOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
+            {resource.status === "done" && (
+              <Tooltip title="Undo">
+                <IconButton
+                  size="small"
+                  onClick={() => onStatusChange("pending")}
+                >
+                  <UndoIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton size="small" onClick={onEdit}>
               <EditOutlinedIcon fontSize="small" />
             </IconButton>

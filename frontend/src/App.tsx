@@ -61,6 +61,19 @@ export default function App() {
     }
   };
 
+  const handleStatusChange = async (
+    resource: Resource,
+    status: Resource["status"],
+  ) => {
+    try {
+      await editResource(resource.id, { status });
+    } catch (error) {
+      setSnackbar(
+        error instanceof Error ? error.message : "Unable to update this tab",
+      );
+    }
+  };
+
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Box component="main" sx={{ flex: 1 }}>
@@ -114,6 +127,7 @@ export default function App() {
             resources={filteredResources}
             onEdit={openEditDialog}
             onDelete={(resource) => removeResource(resource.id)}
+            onStatusChange={handleStatusChange}
           />
         </Container>
 
