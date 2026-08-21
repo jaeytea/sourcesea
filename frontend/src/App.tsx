@@ -1,4 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import {
   AppBar,
   Box,
@@ -7,6 +9,8 @@ import {
   Snackbar,
   Toolbar,
   Typography,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { useState } from "react";
 import { ResourceDialog } from "./components/ResourceDialog";
@@ -17,7 +21,12 @@ import { useResources } from "./hooks/useResources";
 import { Resource } from "./types";
 import { Footer } from "./components/Footer";
 
-export default function App() {
+interface AppProps {
+  mode: "light" | "dark";
+  onToggleMode: () => void;
+}
+
+export default function App({ mode, onToggleMode }: AppProps) {
   const { resources, addResource, editResource, removeResource } =
     useResources();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -81,14 +90,25 @@ export default function App() {
           position="static"
           color="transparent"
           elevation={0}
-          sx={{ borderBottom: "1px solid", borderColor: "white" }}
+          sx={{
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
         >
           <Toolbar>
-            <img
-              src="logo.png"
-              alt="Logo"
-              style={{ width: 40, height: 40, marginRight: 8 }}
-            />
+            {mode === "light" ? (
+              <img
+                src="logo.png"
+                alt="Logo"
+                style={{ width: 40, height: 40, marginRight: 8 }}
+              />
+            ) : (
+              <img
+                src="logo-dark.png"
+                alt="Logo"
+                style={{ width: 40, height: 40, marginRight: 8 }}
+              />
+            )}
             <Box sx={{ display: "block" }}>
               <Typography
                 variant="h4"
@@ -111,18 +131,27 @@ export default function App() {
                 Park your tabs.
               </Typography>
             </Box>
-            {/* <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ textAlign: "right" }}
-          >
-            Username
-          </Typography> */}
+            <Box sx={{ flexGrow: 1 }} />
+            <Tooltip
+              title={mode === "light" ? "Use dark theme" : "Use light theme"}
+            >
+              <IconButton
+                onClick={onToggleMode}
+                color="inherit"
+                aria-label="Toggle theme"
+              >
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
 
         <Container maxWidth="lg" sx={{ py: 4, pb: 12 }}>
-          <SearchBox value={searchQuery} onChange={setSearchQuery} />
+          <SearchBox
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onCreate={openCreateDialog}
+          />
           <ResourceList
             resources={filteredResources}
             onEdit={openEditDialog}
