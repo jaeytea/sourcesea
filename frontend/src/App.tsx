@@ -26,6 +26,7 @@ import { useResources } from "./hooks/useResources";
 import { Resource } from "./types";
 import { Footer } from "./components/Footer";
 import { useAuth } from "./auth/AuthContext";
+import Homepage from "./components/Homepage.jsx";
 
 interface AppProps {
   mode: "light" | "dark";
@@ -92,30 +93,12 @@ export default function App({ mode, onToggleMode }: AppProps) {
   };
 
   //todo: edit this in a diff component
-  const { session, loading, signInWithGoogle, signOut } = useAuth();
+  const { session, loading, signOut } = useAuth();
 
   if (loading) return null; // or a spinner
 
   if (!session) {
-    return (
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        sx={{ height: "100vh" }}
-        spacing={2}
-      >
-        <Typography
-          variant="h3"
-          color="primary.main"
-          sx={{ fontFamily: "sans-serif" }}
-        >
-          SourceSea
-        </Typography>
-        <Button variant="contained" onClick={signInWithGoogle}>
-          Continue with Google
-        </Button>
-      </Stack>
-    );
+    return <Homepage mode={mode} onToggleMode={onToggleMode} />;
   }
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
