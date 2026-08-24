@@ -9,7 +9,7 @@ export function EmptyState() {
     >
       <Typography variant="h5">No tabs parked here yet</Typography>
       <Typography variant="body2" color="text.secondary">
-        Save a link, pick a time, and forget about it until it matters.
+        Save a link, set a revisit time, and forget about it until it matters.
       </Typography>
     </Stack>
   );
