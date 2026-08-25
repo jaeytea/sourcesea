@@ -1,7 +1,5 @@
 -- SourceSea schema
--- Single table for v1. user_id is nullable for now (no auth yet);
--- once Supabase Google OAuth is wired in, it becomes a FK to auth.users
--- and RLS is switched on using the commented policy at the bottom.
+
 
 create extension if not exists pgcrypto;
 
@@ -36,18 +34,23 @@ create trigger trg_resources_updated_at
   for each row execute function set_updated_at();
 
 -- ---------------------------------------------------------------------------
--- FUTURE: enable once Supabase Google OAuth is in place.
+--Supabase Google OAuth RLS
 -- ---------------------------------------------------------------------------
--- alter table resources enable row level security;
+alter table resources enable row level security;
+
+drop policy if exists "select_own_resources" on resources;
+drop policy if exists "insert_own_resources" on resources;
+drop policy if exists "update_own_resources" on resources;
+drop policy if exists "delete_own_resources" on resources;
 --
--- create policy "select_own_resources" on resources
---   for select using (auth.uid() = user_id);
+create policy "select_own_resources" on resources
+  for select using (auth.uid() = user_id);
 --
--- create policy "insert_own_resources" on resources
---   for insert with check (auth.uid() = user_id);
+create policy "insert_own_resources" on resources
+  for insert with check (auth.uid() = user_id);
 --
--- create policy "update_own_resources" on resources
---   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "update_own_resources" on resources
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 --
--- create policy "delete_own_resources" on resources
---   for delete using (auth.uid() = user_id);
+create policy "delete_own_resources" on resources
+  for delete using (auth.uid() = user_id);
