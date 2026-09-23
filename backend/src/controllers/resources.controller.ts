@@ -25,12 +25,16 @@ export async function create(req: Request, res: Response) {
       .json({ error: "url, title and remindAt are required" });
   }
   try {
-    const resource = await resourcesService.createResource(currentUserId(req), {
-      url,
-      title,
-      notes,
-      remindAt,
-    });
+    const resource = await resourcesService.createResource(
+      currentUserId(req),
+      req.userEmail ?? null,
+      {
+        url,
+        title,
+        notes,
+        remindAt,
+      },
+    );
     res.status(201).json(resource);
   } catch (error) {
     if (error instanceof resourcesService.DuplicateResourceError) {
@@ -44,6 +48,7 @@ export async function update(req: Request, res: Response) {
   try {
     const resource = await resourcesService.updateResource(
       currentUserId(req),
+      req.userEmail ?? null,
       req.params.id,
       req.body,
     );

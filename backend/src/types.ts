@@ -1,4 +1,4 @@
-export type ResourceStatus = 'pending' | 'done' | 'dismissed';
+export type ResourceStatus = "pending" | "done" | "dismissed";
 
 // Shape returned to the frontend (camelCase)
 export interface Resource {
@@ -22,6 +22,7 @@ export interface ResourceRow {
   notes: string | null;
   remind_at: string;
   status: ResourceStatus;
+  email_schedule_id: string | null;
   created_at: string;
   updated_at: string;
 }

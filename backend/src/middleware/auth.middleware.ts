@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       userId?: string;
+      userEmail?: string;
     }
   }
 }
@@ -23,5 +24,6 @@ export async function requireAuth(
     return res.status(401).json({ error: "Invalid or expired token" });
 
   req.userId = data.user.id;
+  req.userEmail = data.user.email || undefined;
   nextfn();
 }

@@ -54,3 +54,8 @@ create policy "update_own_resources" on resources
 --
 create policy "delete_own_resources" on resources
   for delete using (auth.uid() = user_id);
+
+
+
+alter table resources
+add column if not exists email_schedule_id text;

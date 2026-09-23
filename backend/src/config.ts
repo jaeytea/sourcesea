@@ -9,4 +9,6 @@ export const config = {
 
   supabaseUrl: process.env.SUPABASE_URL || "",
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+  agentMailApiKey: process.env.AGENTMAIL_API_KEY || "",
+  agentMailInbox: process.env.AGENTMAIL_INBOX || "",
 };
