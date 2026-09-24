@@ -99,7 +99,7 @@ Each user can have up to 10 active scheduled email reminders.
 ![SourceSea dashboard](./screenshots/due-resource.png)
 
 
-> Screenshots coming soon.
+ 
 
 ## Tech Stack
 
