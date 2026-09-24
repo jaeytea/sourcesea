@@ -4,6 +4,8 @@
 
  🎥 [Live Demo](https://sourcesea-chi.vercel.app)
 
+ ![SourceSea](./screenshots/login.png)
+
 ## Tech Stack
 
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -89,9 +91,13 @@ Each user can have up to 10 active scheduled email reminders.
 
 ![Add resource](./screenshots/add-resource.png)
 
+
 ### Reminder Email
 
 ![Reminder email](./screenshots/reminder-email.png)
+
+![SourceSea dashboard](./screenshots/due-resource.png)
+
 
 > Screenshots coming soon.
 
